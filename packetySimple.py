@@ -7,6 +7,7 @@ import os, base64, base58
 #################
 
 def Base58Decoder(text):
+	print('[+] Base58 decoded.')
 	return base58.b58decode(text)
 
 def Base64Decoder(text):
@@ -15,6 +16,7 @@ def Base64Decoder(text):
 	sample_string_bytes = base64.b64decode(text) 
 	sample_string = sample_string_bytes.decode('ascii')
 
+	print('[+] Base64 decoded.')
 	return sample_string
 
 ##################
@@ -24,6 +26,7 @@ def Base64Decoder(text):
 def ReadFrom(file):
 	try:
 		with open(file, 'r') as r:
+			print('[+] Reading from file...')
 			return r.read()
 	except FileNotFoundError:
 		print(f'{file} was not found.')
@@ -32,14 +35,11 @@ def ReadFrom(file):
 # Get filname from user input
 fileAt = input('Filename: ')
 
-
-# All text from text file as plain text
+# Decodes the data from the file provided by the user
 encoded_text = ReadFrom(fileAt)
 if encoded_text != None:
 	decoded_code = Base64Decoder(Base58Decoder(encoded_text))
 
 	with open(fileAt, 'w') as wr:
 		wr.write(decoded_code)
-
-print('DONE...running')
-os.system(f'sleep 3; python3 {fileAt}')
+print(f'[+] Done, {fileAt} is decoded.')
